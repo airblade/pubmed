@@ -13,10 +13,34 @@ require 'rubygems'
 require 'nokogiri'
 require 'sax-machine'
 require 'date'
-require 'awesome_print'
+require 'active_record'
+require 'mysql2'
 
 def log(msg)
   puts "#{Time.now}: #{msg}"
+end
+
+def connect_to_database
+  ActiveRecord::Base.establish_connection(
+    :adapter  => 'mysql',
+    :encoding => 'utf8',
+    :database => 'pubmed_development',
+    :username => 'root',
+    :password => nil,
+    :socket   => '/tmp/mysql.sock'
+  )
+end
+
+def migrate
+  ActiveRecord::Schema.define do
+    create_table :citations, :force => true do |t|
+      t.integer :pmid
+      t.string :pages, :article_title, :objective, :methods, :results, :conclusions
+      t.date :created_on, :completed_on
+      t.string :journal_title, :iso_abbreviation, :volume, :issue, :publication_date
+      t.timestamps
+    end
+  end
 end
 
 class SomeDate  # avoid namespace clash with Date
@@ -82,11 +106,19 @@ class MedLineCitationSet
   elements :MedlineCitation, :as => :citations, :class => MedLineCitation
 end
 
+connect_to_database
+migrate
+
+class Citation < ActiveRecord::Base
+  # TODO validations
+end
 
 file = ARGV[0]
 citation_set = MedLineCitationSet.parse File.read(file)
 citation_set.citations.each do |citation|
-  attrs = ({
+  # Denormalise.  The only normalisable data are the journal fields,
+  # but for now we don't care about journals as first-class entities.
+  c = Citation.create({
     :pmid             => citation.pmid,
     :created_on       => citation.created_on.to_s,
     :completed_on     => citation.completed_on.to_s,
@@ -104,5 +136,9 @@ citation_set.citations.each do |citation|
     :results          => citation.article.abstract.results,
     :conclusions      => citation.article.abstract.conclusions
   })
-  ap attrs
+  if c.valid?
+    print '.'
+  else
+    puts "#{citation.pmid}: #{c.errors}"
+  end
 end
