@@ -2,6 +2,8 @@
 #
 # Downloads PubMed baseline files from NIH.
 # N.B. use from an NIH-approved IP address.
+#
+# http://www.nlm.nih.gov/bsd/licensee/2011_stats/baseline_med_filecount.html
 
 require 'net/ftp'
 require 'digest/md5'
