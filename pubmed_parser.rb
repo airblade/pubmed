@@ -1,58 +1,23 @@
 #!/usr/bin/env ruby
 #
 # Parses PubMed baseline XML files.
+#
+# Each data file contains 30,000 records and is ~165MB.  We parse the
+# XML as a stream rather than a tree for speed and low memory use.
+#
+# Rather than code our own SAX parser, which would be messy and error-
+# prone, we use SAX Machine.  Its parsing is almost as fast, and the code
+# is far cleaner.
 
 require 'rubygems'
 require 'nokogiri'
+require 'sax-machine'
 require 'date'
 require 'awesome_print'
 
 def log(msg)
   puts "#{Time.now}: #{msg}"
 end
-
-# XML files are ~165MB; 30,000 records.
-file = ARGV[0]
-
-# In-memory.  6m46s.
-=begin
-puts 'opening file'
-doc = Nokogiri::XML File.open(file)
-puts 'iterating'
-doc.xpath('//MedlineCitation').each do |medline_citation|
-  pmid = medline_citation.xpath('.//PMID')
-  puts "pmid: #{pmid.text}"
-end
-=end
-
-# Streaming.  52s.
-=begin
-class MedlineCitationSet < Nokogiri::XML::SAX::Document
-  def start_element(name, attributes = [])
-    @element = name
-    if name == 'PMID'
-      @characters = ''
-    end
-  end
-  def end_element(name)
-    if name == 'PMID'
-      log @characters
-      @characters = ''
-    end
-    @element = nil
-  end
-  def characters(string)
-    @characters << string if @element == 'PMID'
-  end
-end
-log "create parser"
-parser = Nokogiri::XML::SAX::Parser.new(MedlineCitationSet.new)
-log "start parsing"
-parser.parse File.read(file)
-=end
-
-# SAX machine.  1m36s.
-require 'sax-machine'
 
 class SomeDate  # avoid namespace clash with Date
   include SAXMachine
@@ -117,9 +82,9 @@ class MedLineCitationSet
   elements :MedlineCitation, :as => :citations, :class => MedLineCitation
 end
 
-log "start parsing"
+
+file = ARGV[0]
 citation_set = MedLineCitationSet.parse File.read(file)
-log "iterate"
 citation_set.citations.each do |citation|
   attrs = ({
     :pmid             => citation.pmid,
