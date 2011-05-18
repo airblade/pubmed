@@ -125,11 +125,13 @@ citation_set.citations.each do |citation|
     :pmid             => citation.pmid,
     :created_on       => citation.created_on.to_s,
     :completed_on     => citation.completed_on.to_s,
+
     :journal_title    => citation.article.journal.title,
     :iso_abbreviation => citation.article.journal.iso_abbreviation,
     :volume           => citation.article.journal.journal_issue.volume,
     :issue            => citation.article.journal.journal_issue.issue,
     :publication_date => citation.article.journal.journal_issue.publication_date.medline_date,
+
     :pages            => citation.article.pagination.medline_pagination,
     :article_title    => citation.article.title,
     :objective        => citation.article.abstract.objective,
