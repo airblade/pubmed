@@ -98,9 +98,10 @@ end
 
 class Article
   include SAXMachine
-  element :Journal,    :as => :journal,    :class => Journal
-  element :Pagination, :as => :pagination, :class => Pagination
-  element :Abstract,   :as => :abstract,   :class => Abstract
+  element :ArticleTitle, :as => :title
+  element :Journal,      :as => :journal,    :class => Journal
+  element :Pagination,   :as => :pagination, :class => Pagination
+  element :Abstract,     :as => :abstract,   :class => Abstract
 end
 
 class MedLineCitation
@@ -121,19 +122,20 @@ citation_set = MedLineCitationSet.parse File.read(file)
 log "iterate"
 citation_set.citations.each do |citation|
   attrs = ({
-    :pmid => citation.pmid,
-    :created_on => citation.created_on.to_s,
-    :completed_on => citation.completed_on.to_s,
-    :title => citation.article.journal.title,
+    :pmid             => citation.pmid,
+    :created_on       => citation.created_on.to_s,
+    :completed_on     => citation.completed_on.to_s,
+    :journal_title    => citation.article.journal.title,
     :iso_abbreviation => citation.article.journal.iso_abbreviation,
-    :volume => citation.article.journal.journal_issue.volume,
-    :issue => citation.article.journal.journal_issue.issue,
+    :volume           => citation.article.journal.journal_issue.volume,
+    :issue            => citation.article.journal.journal_issue.issue,
     :publication_date => citation.article.journal.journal_issue.publication_date.medline_date,
-    :pages => citation.article.pagination.medline_pagination,
-    :objective => citation.article.abstract.objective,
-    :methods => citation.article.abstract._methods,
-    :results => citation.article.abstract.results,
-    :conclusions => citation.article.abstract.conclusions
+    :pages            => citation.article.pagination.medline_pagination,
+    :article_title    => citation.article.title,
+    :objective        => citation.article.abstract.objective,
+    :methods          => citation.article.abstract._methods,
+    :results          => citation.article.abstract.results,
+    :conclusions      => citation.article.abstract.conclusions
   })
   ap attrs
 end
