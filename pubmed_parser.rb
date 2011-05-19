@@ -2,8 +2,8 @@
 #
 # Parses PubMed baseline XML files.
 #
-# Each data file contains 30,000 records and is ~165MB.  We parse the
-# XML as a stream rather than a tree for speed and low memory use.
+# Each data file contains 30,000 records and is ~165MB uncompressed.
+# We parse the XML as a stream rather than a tree for speed and low memory use.
 #
 # Rather than code our own SAX parser, which would be messy and error-
 # prone, we use SAX Machine.  Its parsing is almost as fast, and the code
