@@ -2,9 +2,9 @@
 #
 # Splits up Pubmed baseline XML files into smaller chunks.
 # Each baseline file contains 30,000 citations; each chunk
-# contains 3,000 citations.
+# contains 1,000 citations.
 
-CITATIONS_PER_CHUNK = 3000
+CITATIONS_PER_CHUNK = 1000
 
 HEADER = <<END
 <?xml version="1.0" encoding="UTF-8"?>
