@@ -25,7 +25,8 @@ Dir['*.xml.gz'].sort.each do |gzip_file|
   baseline = gzip_file.sub '.gz', ''
   run "./xml_splitter.rb #{baseline}"
 
-  Dir["#{baseline.sub '.xml', '-*.xml'}"].sort.each do |small_xml|
+  # Sort numerically not alphabetically.
+  Dir["#{baseline.sub '.xml', '-*.xml'}"].sort_by{|file| file[/-(\d+)/, 1]}.each do |small_xml|
     run "./pubmed_parser.rb #{small_xml}"
     run "rm #{small_xml}"
   end
