@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -w
 #
 # Splits up Pubmed baseline XML files into smaller chunks.
 # Each baseline file contains 30,000 citations; each chunk

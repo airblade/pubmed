@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -w
 #
 # Loads Pubmed baseline gzipped XML files into database.
 #
@@ -17,7 +17,8 @@ def run(cmd)
 end
 
 Dir['*.xml.gz'].sort.each do |gzip_file|
-  puts ('-'*78), gzip_file, ('-'*78)
+  separator = '-' * 78
+  puts separator, gzip_file, separator
 
   run "gzip -d #{gzip_file}"
 

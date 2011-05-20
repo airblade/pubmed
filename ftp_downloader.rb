@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -w
 #
 # Downloads PubMed baseline files from NIH.
 # N.B. use from an NIH-approved IP address.

@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -w
 #
 # Parses PubMed baseline XML files.
 #
